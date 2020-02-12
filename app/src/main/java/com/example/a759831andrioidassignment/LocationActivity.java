@@ -141,9 +141,10 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         Object[] dataTransfer;
+        String url;
         switch (item.getItemId()){
             case R.id.action_restaurants:
-                String url = getUrl(latitude,longitude,"restaurant");
+                 url = getUrl(latitude,longitude,"restaurant");
                 dataTransfer = new Object[2];
                 dataTransfer[0] = mMap;
                 dataTransfer[1] = url;
@@ -151,6 +152,16 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                 NearbyPlaceData nearbyPlaceData = new NearbyPlaceData();
                 nearbyPlaceData.execute(dataTransfer);
                 return true;
+
+            case R.id.action_cafe:
+                url = getUrl(latitude,longitude,"cafe");
+                dataTransfer = new Object[2];
+                dataTransfer[0] = mMap;
+                dataTransfer[1] = url;
+
+                NearbyPlaceData nearbyPlaceData1 = new NearbyPlaceData();
+                nearbyPlaceData1.execute(dataTransfer);
+                return  true;
 
                 default:
                     return super.onOptionsItemSelected(item);

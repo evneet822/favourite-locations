@@ -57,7 +57,7 @@ public class NearbyPlaceData extends AsyncTask<Object,String,String > {
             MarkerOptions markerOptions = new MarkerOptions()
                     .position(latLng)
                     .title(placeName + " : " + vicinity)
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
 
             mMap.addMarker(markerOptions);
 //            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
