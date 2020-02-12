@@ -13,8 +13,10 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Looper;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -41,6 +43,9 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
     private int position;
     private String selectedadress;
+
+    public final int RADIUS = 1500;
+    double latitude,longitude;
 
 
 
@@ -132,6 +137,27 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        Object[] dataTransfer;
+        switch (item.getItemId()){
+            case R.id.action_restaurants:
+                String url = getUrl(latitude,longitude,"restaurant");
+                dataTransfer = new Object[2];
+                dataTransfer[0] = mMap;
+                dataTransfer[1] = url;
+
+                NearbyPlaceData nearbyPlaceData = new NearbyPlaceData();
+                nearbyPlaceData.execute(dataTransfer);
+                return true;
+
+                default:
+                    return super.onOptionsItemSelected(item);
+
+        }
+    }
+
     private void requestPermission() {
         System.out.println("request permission");
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
@@ -164,6 +190,8 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                 System.out.println("on location result");
                 for (Location location : locationResult.getLocations()) {
                     LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                    latitude = userLocation.latitude;
+                    longitude = userLocation.longitude;
 
 //                    mMap.clear(); //clear the old markers
 
@@ -226,6 +254,17 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         }
 
         return address;
+
+    }
+
+    private String getUrl(double latitude, double longitude, String nearbyPlace) {
+        StringBuilder googlePlaceUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+        googlePlaceUrl.append("location=" + latitude + "," + longitude);
+        googlePlaceUrl.append("&radius=" + RADIUS);
+        googlePlaceUrl.append("&type=" + nearbyPlace);
+        googlePlaceUrl.append("&key=" + getString(R.string.api_key_places));
+        Log.d("", "getUrl: "+googlePlaceUrl);
+        return googlePlaceUrl.toString();
 
     }
 }
