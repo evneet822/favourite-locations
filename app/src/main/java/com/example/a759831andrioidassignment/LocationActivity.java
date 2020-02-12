@@ -49,6 +49,8 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     double latitude,longitude;
     double destinationLatitude, destinationLongitude;
 
+    public static boolean requestedDirection;
+
 
 
 
@@ -107,9 +109,12 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                 destinationLatitude = latLng.latitude;
                 destinationLongitude = latLng.longitude;
 
+                System.out.println("---------------------------------------------------");
+                System.out.println("latitude " + destinationLatitude + "longitude " + destinationLongitude);
+
                 setMarker(location);
 
-                Locations favLocation = new Locations(location.getLatitude(),location.getLongitude(),getAddress(location));
+                Locations favLocation = new Locations(destinationLatitude,destinationLongitude,getAddress(location));
 
                 Locations.savedLocations.add(favLocation);
 
@@ -125,18 +130,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
             }
         });
 
-        if(position >= 0){
 
-            System.out.println("inside postion if");
-            Location selectedLocation = new Location("hii");
-            selectedLocation.setLatitude(Locations.savedLocations.get(position).getUserLat());
-            selectedLocation.setLongitude(Locations.savedLocations.get(position).getUserLong());
-            selectedadress = Locations.savedLocations.get(position).getAddress();
-            LatLng ulatLng = new LatLng(selectedLocation.getLatitude(),selectedLocation.getLongitude());
-            MarkerOptions options = new MarkerOptions().position(ulatLng).title(selectedadress)
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-            mMap.addMarker(options);
-        }
 
 
 
@@ -186,6 +180,24 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
             case R.id.action_terrain:
                 mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+                return true;
+
+            case R.id.action_distance:
+            case R.id.action_direction:
+                dataTransfer = new Object[3];
+                url = getDirectionUrl();
+                dataTransfer[0] = mMap;
+                dataTransfer[1] = url;
+                dataTransfer[2] = new LatLng(destinationLatitude,destinationLongitude);
+
+                GetDirectionsData getDirectionsData = new GetDirectionsData();
+                getDirectionsData.execute(dataTransfer);
+                if(item.getItemId() == R.id.action_distance)
+                    requestedDirection = false;
+                else
+                    requestedDirection = true;
+
+                return true;
 
 
                 default:
@@ -241,9 +253,30 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                     mMap.addMarker(new MarkerOptions().position(userLocation).title("Your Location")
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 
+
+
+                }
+
+                if(position >= 0){
+
+                    System.out.println("inside postion if");
+                    Location selectedLocation = new Location("hii");
+                    selectedLocation.setLatitude(Locations.savedLocations.get(position).getUserLat());
+                    selectedLocation.setLongitude(Locations.savedLocations.get(position).getUserLong());
+                    selectedadress = Locations.savedLocations.get(position).getAddress();
+                    System.out.println("---------------------------------------------------");
+                    System.out.println(selectedadress);
+                    LatLng ulatLng = new LatLng(selectedLocation.getLatitude(),selectedLocation.getLongitude());
+                    System.out.println("---------------------------------------------------");
+                    System.out.println("latitude " + ulatLng.latitude + "longitude " + ulatLng.longitude);
+
+                    MarkerOptions options = new MarkerOptions().position(ulatLng).title(selectedadress)
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
+                    mMap.addMarker(options);
                 }
             }
         };
+
     }
 
     @Override
@@ -302,5 +335,14 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         Log.d("", "getUrl: "+googlePlaceUrl);
         return googlePlaceUrl.toString();
 
+    }
+
+    private String getDirectionUrl() {
+        StringBuilder googleDirectionUrl = new StringBuilder("https://maps.googleapis.com/maps/api/directions/json?");
+        googleDirectionUrl.append("origin="+latitude+","+longitude);
+        googleDirectionUrl.append("&destination="+destinationLatitude+","+destinationLongitude);
+        googleDirectionUrl.append("&key="+getString(R.string.api_key_places));
+        Log.d("", "getDirectionUrl: "+googleDirectionUrl);
+        return googleDirectionUrl.toString();
     }
 }

@@ -50,7 +50,6 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
         distance = distances.get("distance");
         duration = distances.get("duration");
 
-        mMap.clear();
 
         MarkerOptions markerOptions = new MarkerOptions()
                 .position(latLng)
@@ -60,7 +59,7 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
         mMap.addMarker(markerOptions);
 
 
-        if (MainActivity.requestedDirection) {
+        if (LocationActivity.requestedDirection) {
             String[] directionsList;
             DataParser parser = new DataParser();
             directionsList = parser.parseDirections(s);

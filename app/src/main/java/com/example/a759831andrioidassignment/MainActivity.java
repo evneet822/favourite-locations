@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
     Button addPlace;
     ListView locationListView;
 
-    public static boolean requestedDirection;
+
 
 
     @Override
