@@ -65,41 +65,11 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         position = intent.getIntExtra("listPosition",-1);
         System.out.println(position);
 
-//        if(position >= 0){
-//
-//            System.out.println("inside postion if");
-//            Location selectedLocation = new Location("hii");
-//            selectedLocation.setLatitude(Locations.savedLocations.get(position).getUserLat());
-//            selectedLocation.setLongitude(Locations.savedLocations.get(position).getUserLong());
-////
-//            selectedadress = Locations.savedLocations.get(position).getAddress();
-////
-//            LatLng latLng = new LatLng(selectedLocation.getLatitude(),selectedLocation.getLongitude());
-//            MarkerOptions options = new MarkerOptions().position(latLng).title(selectedadress)
-//                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-//            mMap.addMarker(options);
-//        }
-////
-//        if(position >= 0){
-//
-//            Location selectedLocations = new Location("");
-//            selectedLocations.setLatitude(Locations.savedLocations.get(position).getUserLat());
-//            selectedLocations.setLongitude(Locations.savedLocations.get(position).getUserLong());
-//            selectedadress = Locations.savedLocations.get(position).getAddress();
-//
-//            setMarker(selectedLocations);
-//
-//        }
-
-
-
-
     }
 
     private void initMap() {
         System.out.println("inside init");
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-//        mapFragment.getMapAsync(this);
         mapFragment.getMapAsync(this);
     }
 
@@ -140,9 +110,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
             Location selectedLocation = new Location("hii");
             selectedLocation.setLatitude(Locations.savedLocations.get(position).getUserLat());
             selectedLocation.setLongitude(Locations.savedLocations.get(position).getUserLong());
-//
             selectedadress = Locations.savedLocations.get(position).getAddress();
-//
             LatLng ulatLng = new LatLng(selectedLocation.getLatitude(),selectedLocation.getLongitude());
             MarkerOptions options = new MarkerOptions().position(ulatLng).title(selectedadress)
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
@@ -217,16 +185,9 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
     private void setMarker(Location location){
 
-//        if(position >= 0){
-//            LatLng userlatLng = new LatLng(location.getLatitude(),location.getLongitude());
-//            MarkerOptions options = new MarkerOptions().position(userlatLng).title(selectedadress);
-//            mMap.addMarker(options);
-//        }else{
             LatLng userlatLng = new LatLng(location.getLatitude(),location.getLongitude());
             MarkerOptions options = new MarkerOptions().position(userlatLng).title("your location");
             mMap.addMarker(options);
-//        }
-
 
     }
 
