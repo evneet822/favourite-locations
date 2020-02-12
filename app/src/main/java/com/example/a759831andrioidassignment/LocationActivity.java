@@ -176,6 +176,14 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                 return true;
 
 
+            case R.id.action_hybrid:
+                mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                return true;
+
+            case R.id.action_terrain:
+                mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+
+
                 default:
                     return super.onOptionsItemSelected(item);
 
@@ -217,7 +225,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                     latitude = userLocation.latitude;
                     longitude = userLocation.longitude;
 
-                   mMap.clear(); 
+                   mMap.clear();
 
                     CameraPosition cameraPosition = CameraPosition.builder()
                             .target(new LatLng(userLocation.latitude, userLocation.longitude))
