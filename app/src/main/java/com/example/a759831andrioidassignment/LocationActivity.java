@@ -47,6 +47,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
     public final int RADIUS = 1500;
     double latitude,longitude;
+    double destinationLatitude, destinationLongitude;
 
 
 
@@ -102,6 +103,9 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                 Location location = new Location("your destination");
                 location.setLatitude(latLng.latitude);
                 location.setLongitude(latLng.longitude);
+
+                destinationLatitude = latLng.latitude;
+                destinationLongitude = latLng.longitude;
 
                 setMarker(location);
 

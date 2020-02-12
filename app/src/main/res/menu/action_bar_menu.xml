@@ -4,6 +4,19 @@
 
 
     <item
+        android:id="@+id/action_distance"
+        android:icon="@drawable/distance"
+        app:showAsAction="ifRoom"
+        android:title="distance"/>
+
+    <item
+        android:id="@+id/action_direction"
+        android:icon="@drawable/ic_near_me_black_24dp"
+        app:showAsAction="ifRoom"
+        android:title="Direction"/>
+
+
+    <item
         android:id="@+id/action_places"
         android:title="Nearby Places"
         app:showAsAction="never">
