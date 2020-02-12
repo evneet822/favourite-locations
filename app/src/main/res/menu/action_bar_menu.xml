@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <item
+        android:id="@+id/action_places"
+        android:title="Nearby Places"
+        app:showAsAction="never">
+
+        <menu>
+            <item
+                android:id="@+id/action_restaurants"
+                android:title="restaurants"/>
+
+            <item
+                android:id="@+id/action_cafe"
+                android:title="Cafe´s"/>
+
+            <item
+                android:id="@+id/action_museum"
+                android:title="Museums"/>
+
+        </menu>
+
+    </item>
+
+    <item
+        android:id="@+id/action_maps"
+        android:title="Maps"
+        app:showAsAction="never">
+
+        <menu>
+
+            <item
+                android:id="@+id/action_hybrid"
+                android:title="Hybrid"/>
+
+            <item
+                android:id="@+id/action_terrain"
+                android:title="Terrain"/>
+
+
+
+        </menu>
+
+    </item>
+
+</menu>

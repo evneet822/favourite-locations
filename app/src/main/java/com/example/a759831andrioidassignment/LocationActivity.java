@@ -13,6 +13,8 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Looper;
+import android.view.Menu;
+import android.view.MenuInflater;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -66,6 +68,15 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         System.out.println(position);
 
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.action_bar_menu,menu);
+        return true;
+    }
+
+
 
     private void initMap() {
         System.out.println("inside init");
