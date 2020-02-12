@@ -63,6 +63,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
         Intent intent = getIntent();
         position = intent.getIntExtra("listPosition",-1);
+        System.out.println(position);
 
 //        if(position >= 0){
 //
@@ -127,8 +128,27 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                     System.out.println(Locations.savedLocations.get(i).getAddress());
                 }
 
+
+
+
             }
         });
+
+        if(position >= 0){
+
+            System.out.println("inside postion if");
+            Location selectedLocation = new Location("hii");
+            selectedLocation.setLatitude(Locations.savedLocations.get(position).getUserLat());
+            selectedLocation.setLongitude(Locations.savedLocations.get(position).getUserLong());
+//
+            selectedadress = Locations.savedLocations.get(position).getAddress();
+//
+            LatLng ulatLng = new LatLng(selectedLocation.getLatitude(),selectedLocation.getLongitude());
+            MarkerOptions options = new MarkerOptions().position(ulatLng).title(selectedadress)
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+            mMap.addMarker(options);
+        }
+
 
 
     }
