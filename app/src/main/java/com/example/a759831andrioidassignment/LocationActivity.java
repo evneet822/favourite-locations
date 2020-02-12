@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -163,6 +164,18 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                 nearbyPlaceData1.execute(dataTransfer);
                 return  true;
 
+            case R.id.action_museum:
+                url = getUrl(latitude,longitude,"museum");
+                dataTransfer = new Object[2];
+                dataTransfer[0] = mMap;
+                dataTransfer[1] = url;
+
+                NearbyPlaceData nearbyPlaceData2 = new  NearbyPlaceData();
+                nearbyPlaceData2.execute(dataTransfer);
+                Toast.makeText(this, "museum", Toast.LENGTH_SHORT).show();
+                return true;
+
+
                 default:
                     return super.onOptionsItemSelected(item);
 
@@ -204,7 +217,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                     latitude = userLocation.latitude;
                     longitude = userLocation.longitude;
 
-//                    mMap.clear(); //clear the old markers
+                   mMap.clear(); 
 
                     CameraPosition cameraPosition = CameraPosition.builder()
                             .target(new LatLng(userLocation.latitude, userLocation.longitude))
