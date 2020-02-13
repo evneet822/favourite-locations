@@ -8,24 +8,20 @@ public class Locations {
 
     private Double userLat;
     private Double userLong;
-    private String address;
-    private Location favLocation;
+    private String address, date;
 
 
 
 
     public static ArrayList<Locations> savedLocations = new ArrayList<>();
 
-    public Locations(double userLat, double userLong, String address) {
+    public Locations(Double userLat, Double userLong, String address, String date) {
         this.userLat = userLat;
         this.userLong = userLong;
         this.address = address;
+        this.date = date;
     }
 
-    public Locations(String address, Location favLocation) {
-        this.address = address;
-        this.favLocation = favLocation;
-    }
 
     public Double getUserLat() {
         return userLat;
@@ -39,7 +35,7 @@ public class Locations {
         return address;
     }
 
-    public Location getFavLocation() {
-        return favLocation;
+    public String getDate() {
+        return date;
     }
 }

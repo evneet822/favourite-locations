@@ -7,6 +7,7 @@ import android.util.Log;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.PolyUtil;
 
@@ -23,6 +24,8 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
     String duration;
 
     LatLng latLng;
+
+    private Polyline polyline;
 
     @Override
     protected String doInBackground(Object... objects) {
@@ -50,6 +53,15 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
         distance = distances.get("distance");
         duration = distances.get("duration");
 
+        if(LocationActivity.marker != null)
+            LocationActivity.marker.remove();
+
+        if(polyline != null)
+            polyline.remove();
+
+//        LocationActivity.marker.remove();
+//        polyline.remove();
+
 
         MarkerOptions markerOptions = new MarkerOptions()
                 .position(latLng)
@@ -75,6 +87,7 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
                     .color(Color.RED)
                     .width(10)
                     .addAll(PolyUtil.decode(directionsList[i]));
+            polyline = mMap.addPolyline(options);
             mMap.addPolyline(options);
         }
     }

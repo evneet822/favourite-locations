@@ -31,9 +31,12 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -50,9 +53,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     double destinationLatitude, destinationLongitude;
 
     public static boolean requestedDirection;
-
-
-
+    public static Marker marker;
 
     FusedLocationProviderClient fusedLocationProviderClient;
     LocationRequest locationRequest;
@@ -109,12 +110,16 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                 destinationLatitude = latLng.latitude;
                 destinationLongitude = latLng.longitude;
 
+                Calendar calendar = Calendar.getInstance();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+                String savedDate = sdf.format(calendar.getTime());
+
                 System.out.println("---------------------------------------------------");
                 System.out.println("latitude " + destinationLatitude + "longitude " + destinationLongitude);
 
                 setMarker(location);
 
-                Locations favLocation = new Locations(destinationLatitude,destinationLongitude,getAddress(location));
+                Locations favLocation = new Locations(destinationLatitude,destinationLongitude,getAddress(location),savedDate);
 
                 Locations.savedLocations.add(favLocation);
 
@@ -123,17 +128,8 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                     System.out.println(Locations.savedLocations.get(i).getUserLat());
                     System.out.println(Locations.savedLocations.get(i).getAddress());
                 }
-
-
-
-
             }
         });
-
-
-
-
-
     }
 
     @Override
@@ -300,6 +296,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
             LatLng userlatLng = new LatLng(location.getLatitude(),location.getLongitude());
             MarkerOptions options = new MarkerOptions().position(userlatLng).title("your location");
+            marker = mMap.addMarker(options);
             mMap.addMarker(options);
 
     }

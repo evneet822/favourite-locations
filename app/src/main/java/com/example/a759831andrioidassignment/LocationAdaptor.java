@@ -44,7 +44,12 @@ public class LocationAdaptor extends ArrayAdapter {
 
         System.out.println("adaptor view "  + locations1.getAddress());
 
-        adrss.setText(locations1.getAddress());
+        String savedAddress = locations1.getAddress();
+
+        if(savedAddress.isEmpty())
+            adrss.setText(locations1.getDate());
+        else
+            adrss.setText(savedAddress);
 
         return v;
     }
