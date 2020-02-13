@@ -264,9 +264,14 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                     selectedLocation.setLatitude(Locations.savedLocations.get(position).getUserLat());
                     selectedLocation.setLongitude(Locations.savedLocations.get(position).getUserLong());
                     selectedadress = Locations.savedLocations.get(position).getAddress();
+
                     System.out.println("---------------------------------------------------");
                     System.out.println(selectedadress);
+
                     LatLng ulatLng = new LatLng(selectedLocation.getLatitude(),selectedLocation.getLongitude());
+                    destinationLatitude = ulatLng.latitude;
+                    destinationLongitude = ulatLng.longitude;
+
                     System.out.println("---------------------------------------------------");
                     System.out.println("latitude " + ulatLng.latitude + "longitude " + ulatLng.longitude);
 
