@@ -50,6 +50,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
     private int position;
     private String selectedadress;
+    private boolean alreadyAdded = false;
 
     public final int RADIUS = 1500;
     double latitude,longitude;
@@ -130,6 +131,8 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+
+
                         Locations.savedLocations.add(favLocation);
                     }
                 });
@@ -155,6 +158,9 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
             @Override
             public boolean onMarkerClick(Marker marker) {
 
+                destinationLatitude = marker.getPosition().latitude;
+                destinationLongitude = marker.getPosition().longitude;
+
                         Calendar calendar = Calendar.getInstance();
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
                         String savedDate1 = sdf.format(calendar.getTime());
@@ -174,7 +180,29 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                         builder1.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Locations.savedLocations.add(favLocation1);
+
+                                for (int i = 0 ; i < Locations.savedLocations.size(); i++){
+                                    double lat = Locations.savedLocations.get(i).getUserLat();
+                                    if(destinationLatitude == lat){
+                                        alreadyAdded = true;
+                                        break;
+                                    }
+                                }
+                                if(alreadyAdded){
+                                    AlertDialog.Builder builder2 = new AlertDialog.Builder(LocationActivity.this);
+                                    builder2.setTitle("Location already saved!!!");
+                                    builder2.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                        }
+                                    });
+                                    AlertDialog dialog2 = builder2.create();
+                                    dialog2.show();
+                                }else {
+                                    Locations.savedLocations.add(favLocation1);
+                                }
+
                             }
                         });
 
@@ -191,8 +219,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                         System.out.println("after alert");
 
 
-                destinationLatitude = marker.getPosition().latitude;
-                destinationLongitude = marker.getPosition().longitude;
+
 
                 return true;
             }
