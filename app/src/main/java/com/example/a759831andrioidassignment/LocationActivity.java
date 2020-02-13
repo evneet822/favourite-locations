@@ -36,6 +36,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -53,7 +54,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     double destinationLatitude, destinationLongitude;
 
     public static boolean requestedDirection;
-    public static Marker marker;
+
 
     FusedLocationProviderClient fusedLocationProviderClient;
     LocationRequest locationRequest;
@@ -84,6 +85,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.action_bar_menu,menu);
         return true;
+
     }
 
 
@@ -103,7 +105,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
             @Override
             public void onMapClick(LatLng latLng) {
 
-                Location location = new Location("your destination");
+                Location location = new Location("location saved");
                 location.setLatitude(latLng.latitude);
                 location.setLongitude(latLng.longitude);
 
@@ -128,6 +130,18 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                     System.out.println(Locations.savedLocations.get(i).getUserLat());
                     System.out.println(Locations.savedLocations.get(i).getAddress());
                 }
+
+                mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(Marker marker) {
+
+
+                        destinationLatitude = marker.getPosition().latitude;
+                        destinationLongitude = marker.getPosition().longitude;
+
+                        return true;
+                    }
+                });
             }
         });
     }
@@ -296,7 +310,8 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
             LatLng userlatLng = new LatLng(location.getLatitude(),location.getLongitude());
             MarkerOptions options = new MarkerOptions().position(userlatLng).title("your location");
-            marker = mMap.addMarker(options);
+
+//            markerLmMap.addMarker(options));
             mMap.addMarker(options);
 
     }
