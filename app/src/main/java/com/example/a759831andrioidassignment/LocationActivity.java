@@ -1,10 +1,12 @@
 package com.example.a759831andrioidassignment;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -121,29 +123,78 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
                 setMarker(location);
 
-                Locations favLocation = new Locations(destinationLatitude,destinationLongitude,getAddress(location),savedDate);
+                final Locations favLocation = new Locations(destinationLatitude,destinationLongitude,getAddress(location),savedDate);
 
+                AlertDialog.Builder builder = new AlertDialog.Builder(LocationActivity.this);
+                builder.setTitle("Do you want to save location?");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Locations.savedLocations.add(favLocation);
+                    }
+                });
 
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
 
-                Locations.savedLocations.add(favLocation);
-
+                    }
+                });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
 
                 for (int i = 0 ; i < Locations.savedLocations.size(); i++){
                     System.out.println(Locations.savedLocations.get(i).getUserLat());
                     System.out.println(Locations.savedLocations.get(i).getAddress());
                 }
 
-                mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                    @Override
-                    public boolean onMarkerClick(Marker marker) {
+
+            }
+        });
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+
+                        Calendar calendar = Calendar.getInstance();
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+                        String savedDate1 = sdf.format(calendar.getTime());
+
+                        Location nearbyLocation = new Location("");
+                        nearbyLocation.setLatitude(marker.getPosition().latitude);
+                        nearbyLocation.setLongitude(marker.getPosition().longitude);
 
 
-                        destinationLatitude = marker.getPosition().latitude;
-                        destinationLongitude = marker.getPosition().longitude;
+                        final Locations favLocation1 = new Locations(marker.getPosition().latitude,marker.getPosition().longitude,getAddress(nearbyLocation),savedDate1);
 
-                        return true;
-                    }
-                });
+                        System.out.println("---------------------------------------------------");
+                        System.out.println("before alert");
+
+                        AlertDialog.Builder builder1 = new AlertDialog.Builder(LocationActivity.this);
+                        builder1.setTitle("Do you want to save location?");
+                        builder1.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Locations.savedLocations.add(favLocation1);
+                            }
+                        });
+
+                        builder1.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+                        AlertDialog alertDialog1 = builder1.create();
+                        alertDialog1.show();
+
+                        System.out.println("---------------------------------------------------");
+                        System.out.println("after alert");
+
+
+                destinationLatitude = marker.getPosition().latitude;
+                destinationLongitude = marker.getPosition().longitude;
+
+                return true;
             }
         });
     }

@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
@@ -62,6 +63,14 @@ public class NearbyPlaceData extends AsyncTask<Object,String,String > {
                     .icon(BitmapDescriptorFactory.defaultMarker(bitmapDescriptorFactory));
 
             mMap.addMarker(markerOptions);
+
+//            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+//                @Override
+//                public boolean onMarkerClick(Marker marker) {
+//
+//                    return true;
+//                }
+//            });
 //            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 //            mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
 
