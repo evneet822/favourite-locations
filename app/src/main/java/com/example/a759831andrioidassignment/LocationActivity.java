@@ -123,6 +123,8 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
                 Locations favLocation = new Locations(destinationLatitude,destinationLongitude,getAddress(location),savedDate);
 
+
+
                 Locations.savedLocations.add(favLocation);
 
 
@@ -151,12 +153,15 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
         Object[] dataTransfer;
         String url;
+        float color;
         switch (item.getItemId()){
             case R.id.action_restaurants:
                  url = getUrl(latitude,longitude,"restaurant");
-                dataTransfer = new Object[2];
+                 color = BitmapDescriptorFactory.HUE_MAGENTA;
+                dataTransfer = new Object[3];
                 dataTransfer[0] = mMap;
                 dataTransfer[1] = url;
+                dataTransfer[2] = color;
 
                 NearbyPlaceData nearbyPlaceData = new NearbyPlaceData();
                 nearbyPlaceData.execute(dataTransfer);
@@ -164,9 +169,11 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
             case R.id.action_cafe:
                 url = getUrl(latitude,longitude,"cafe");
-                dataTransfer = new Object[2];
+                color = BitmapDescriptorFactory.HUE_YELLOW;
+                dataTransfer = new Object[3];
                 dataTransfer[0] = mMap;
                 dataTransfer[1] = url;
+                dataTransfer[2] = color;
 
                 NearbyPlaceData nearbyPlaceData1 = new NearbyPlaceData();
                 nearbyPlaceData1.execute(dataTransfer);
@@ -174,9 +181,11 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
             case R.id.action_museum:
                 url = getUrl(latitude,longitude,"museum");
-                dataTransfer = new Object[2];
+                color = BitmapDescriptorFactory.HUE_ORANGE;
+                dataTransfer = new Object[3];
                 dataTransfer[0] = mMap;
                 dataTransfer[1] = url;
+                dataTransfer[2] = color;
 
                 NearbyPlaceData nearbyPlaceData2 = new  NearbyPlaceData();
                 nearbyPlaceData2.execute(dataTransfer);

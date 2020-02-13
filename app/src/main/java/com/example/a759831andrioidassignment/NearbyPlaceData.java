@@ -17,12 +17,14 @@ public class NearbyPlaceData extends AsyncTask<Object,String,String > {
     String googlePlacesData;
     GoogleMap mMap;
     String url;
+    float bitmapDescriptorFactory;
 
 
     @Override
     protected String doInBackground(Object... objects) {
         mMap = (GoogleMap) objects[0];
         url = (String) objects[1];
+        bitmapDescriptorFactory = (Float) objects[2];
 
         FetchURL fetchURL = new FetchURL();
         try {
@@ -57,7 +59,7 @@ public class NearbyPlaceData extends AsyncTask<Object,String,String > {
             MarkerOptions markerOptions = new MarkerOptions()
                     .position(latLng)
                     .title(placeName + " : " + vicinity)
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+                    .icon(BitmapDescriptorFactory.defaultMarker(bitmapDescriptorFactory));
 
             mMap.addMarker(markerOptions);
 //            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
