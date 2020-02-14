@@ -26,6 +26,7 @@
             android:background="@color/colorPrimary"
             android:text="ADD TO FAVOURITE"
             android:id="@+id/btn_add_favourite"
+            android:textColor="#fff"
             android:layout_weight="3"/>
 
         <CheckBox
@@ -34,6 +35,7 @@
             android:layout_weight="1"
             android:background="@color/colorPrimary"
             android:id="@+id/checkbox_visited"
+            android:textColor="#fff"
             android:text="Visited"
             android:enabled="false"/>
 

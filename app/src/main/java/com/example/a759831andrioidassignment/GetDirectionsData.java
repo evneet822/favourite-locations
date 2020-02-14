@@ -1,8 +1,10 @@
 package com.example.a759831andrioidassignment;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
@@ -70,6 +72,8 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
                 .title("Duration : " + duration)
                 .snippet("Distance : " + distance);
         mMap.addMarker(markerOptions);
+        LocationActivity.distance = distance;
+        LocationActivity.duration = duration;
 
 
         if (LocationActivity.requestedDirection) {

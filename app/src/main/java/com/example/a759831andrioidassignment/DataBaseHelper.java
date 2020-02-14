@@ -88,7 +88,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return sqLiteDatabase.delete(TABLE_NAME,COLUMN_ID + "=?", new String[]{String.valueOf(id)}) > 0;
     }
 
-    boolean updateLocation(int id, double latitute, double longitude, String address,int isVisited){
+    boolean updateLocation(int id, double latitute, double longitude, String address,String date, int isVisited){
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
         ContentValues cv = new ContentValues();
 
@@ -99,6 +99,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_LAT,String.valueOf(latitute));
         cv.put(COLUMN_LONG,String.valueOf(longitude));
         cv.put(COLUMN_ADRRESS,address);
+        cv.put(COLUMN_DATE,date);
         cv.put(COLUMN_VISITED,isVisited);
 
         // this method returns the number of rows affected

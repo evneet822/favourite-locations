@@ -61,6 +61,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     double destinationLatitude, destinationLongitude;
 
     public static boolean requestedDirection,locationSelected;
+    public static String distance,duration;
     private static int locationVisited = 0;
 
     Button addFavourite;
@@ -206,7 +207,13 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
 //                Locations locations1 = new Locations(destinationLatitude,destinationLongitude,getAddress(location),date,locationVisited);
 
-                dataBaseHelper.updateLocation(Locations.savedLocations.get(position).getId(),destinationLatitude,destinationLongitude,(getAddress(location)),locationVisited);
+                if(dataBaseHelper.updateLocation(Locations.savedLocations.get(position).getId(),destinationLatitude,destinationLongitude,(getAddress(location)),date,locationVisited)){
+                    Toast.makeText(LocationActivity.this, "updated", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(LocationActivity.this, "not updated", Toast.LENGTH_SHORT).show();
+                }
+
+
 //                Locations locations = new Locations(1,destinationLatitude,destinationLongitude,getAddress(location),date,locationVisited);
 //                Locations.savedLocations.remove(position);
 //                Locations.savedLocations.add(position,locations);
@@ -396,8 +403,11 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
                 GetDirectionsData getDirectionsData = new GetDirectionsData();
                 getDirectionsData.execute(dataTransfer);
-                if(item.getItemId() == R.id.action_distance)
+
+                if(item.getItemId() == R.id.action_distance) {
+                    Toast.makeText(this, "Distance: " + distance + "Duration: " + duration, Toast.LENGTH_SHORT).show();
                     requestedDirection = false;
+                }
                 else
                     requestedDirection = true;
 
@@ -572,12 +582,14 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     @Override
     public void onMarkerDragEnd(Marker marker) {
 
+        System.out.println("inside marker end");
+
         destinationLongitude = marker.getPosition().latitude;
         destinationLongitude = marker.getPosition().longitude;
 
-        Location location = new Location("");
-        location.setLatitude(destinationLatitude);
-        location.setLongitude(destinationLongitude);
+        Location location1 = new Location("");
+        location1.setLatitude(destinationLatitude);
+        location1.setLongitude(destinationLongitude);
 
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
@@ -588,8 +600,23 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 //        Locations.savedLocations.remove(position);
 //
 //        Locations.savedLocations.add(position,locations1);
+        System.out.println("--------------------------------------------------------------------");
+        System.out.println(getAddress(location1));
 
-//        dataBaseHelper.updateLocation(Locations.savedLocations.get(position).getId(),destinationLatitude,destinationLongitude,(getAddress(location)),savedDate1,locationVisited);
+        if( dataBaseHelper.updateLocation(Locations.savedLocations.get(position).getId(),destinationLatitude,destinationLongitude,getAddress(location1),savedDate1,locationVisited)){
+            Toast.makeText(this, "updated", Toast.LENGTH_SHORT).show();
+            System.out.println("--------------------------------------------------------------------");
+            System.out.println(" updated");
+        }else {
+            Toast.makeText(this, "not updated", Toast.LENGTH_SHORT).show();
+            System.out.println("--------------------------------------------------------------------");
+            System.out.println("not updated");
+        }
+
+
+
+//        dataBaseHelper.updateLocation(Locations.savedLocations.get(position).getId(),destinationLatitude,destinationLongitude,(getAddress(location)),locationVisited);
+
 
     }
 

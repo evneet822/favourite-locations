@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
                 SwipeMenuItem deleteitem = new SwipeMenuItem(getApplicationContext());
                 deleteitem.setBackground(new ColorDrawable(Color.RED));
                 deleteitem.setTitle("Delete");
-                deleteitem.setTitleSize(20);
+                deleteitem.setTitleSize(15);
                 deleteitem.setTitleColor(Color.WHITE);
                 deleteitem.setWidth(170);
 
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                 updateitem.setBackground(new ColorDrawable(Color.GRAY));
                 updateitem.setWidth(170);
                 updateitem.setTitle("Update");
-                updateitem.setTitleSize(20);
+                updateitem.setTitleSize(15);
                 updateitem.setTitleColor(Color.WHITE);
 
                 menu.addMenuItem(updateitem);
