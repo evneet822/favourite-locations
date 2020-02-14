@@ -19,6 +19,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -43,7 +47,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-public class LocationActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class LocationActivity extends AppCompatActivity implements OnMapReadyCallback,GoogleMap.OnMarkerDragListener {
 
     private GoogleMap mMap;
     private int REQUEST_CODE = 1;
@@ -56,7 +60,13 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     double latitude,longitude;
     double destinationLatitude, destinationLongitude;
 
-    public static boolean requestedDirection;
+    public static boolean requestedDirection,locationSelected;
+    private static int locationVisited = 0;
+
+    Button addFavourite;
+    CheckBox checkBoxVisited;
+
+    DataBaseHelper dataBaseHelper;
 
 
     FusedLocationProviderClient fusedLocationProviderClient;
@@ -71,16 +81,139 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         initMap();
         getUserLocation();
 
+        addFavourite = findViewById(R.id.btn_add_favourite);
+        checkBoxVisited = findViewById(R.id.checkbox_visited);
+
 
         if(!checkPermission())
             requestPermission();
         else
             fusedLocationProviderClient.requestLocationUpdates(locationRequest,locationCallback, Looper.myLooper());
 
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
         position = intent.getIntExtra("listPosition",-1);
-        System.out.println(position);
+        locationSelected = intent.getBooleanExtra("update",false);
 
+
+        if(position >= 0){
+            addFavourite.setEnabled(false);
+            checkBoxVisited.setEnabled(true);
+        }
+
+        dataBaseHelper = new DataBaseHelper(this);
+
+        addFavourite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Calendar calendar = Calendar.getInstance();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+                final String savedDate1 = sdf.format(calendar.getTime());
+
+                final Location nearbyLocation = new Location("");
+                nearbyLocation.setLatitude(destinationLatitude);
+                nearbyLocation.setLongitude(destinationLongitude);
+
+
+//                final Locations favLocation1 = new Locations(destinationLatitude,destinationLongitude,getAddress(nearbyLocation),savedDate1,locationVisited);
+//                final Locations favlocation = new Locations(1,destinationLatitude,destinationLongitude,getAddress(nearbyLocation),savedDate1,locationVisited);
+
+                System.out.println("---------------------------------------------------");
+                System.out.println("before alert");
+
+                AlertDialog.Builder builder1 = new AlertDialog.Builder(LocationActivity.this);
+                builder1.setTitle("Do you want to save location?");
+                builder1.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        for (int i = 0 ; i < Locations.savedLocations.size(); i++){
+                            double lat = Locations.savedLocations.get(i).getUserLat();
+                            if(destinationLatitude == lat){
+                                alreadyAdded = true;
+                                break;
+                            }
+                        }
+                        if(alreadyAdded){
+                            AlertDialog.Builder builder2 = new AlertDialog.Builder(LocationActivity.this);
+                            builder2.setTitle("Location already saved!!!");
+                            builder2.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                            AlertDialog dialog2 = builder2.create();
+                            dialog2.show();
+                        }else {
+//                            Locations.savedLocations.add(favlocation);
+
+                            if(dataBaseHelper.addLocation(destinationLatitude,destinationLongitude,(getAddress(nearbyLocation)),savedDate1,locationVisited)){
+                                System.out.println("added");
+                            }else {
+                                System.out.println("not added");
+                            }
+
+//                            if(databaseHelper.addEmployee(name,dept,joiningDate,Double.parseDouble(salary)))
+//                                Toast.makeText(this, "employee added", Toast.LENGTH_SHORT).show();
+//                            else
+//                                Toast.makeText(this, "employee not added", Toast.LENGTH_SHORT).show();
+
+                            Intent intent2 = new Intent(LocationActivity.this,MainActivity.class);
+                            intent2.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent2);
+
+
+                        }
+
+
+
+                    }
+                });
+
+                builder1.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                AlertDialog alertDialog1 = builder1.create();
+                alertDialog1.show();
+
+                System.out.println("---------------------------------------------------");
+                System.out.println("after alert");
+            }
+        });
+
+        checkBoxVisited.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if(isChecked){
+                    locationVisited = 1;
+                }
+
+
+
+                destinationLatitude = Locations.savedLocations.get(position).getUserLat();
+                destinationLongitude = Locations.savedLocations.get(position).getUserLong();
+
+                Location location = new Location("");
+                location.setLatitude(destinationLatitude);
+                location.setLongitude(destinationLongitude);
+
+                String date = Locations.savedLocations.get(position).getDate();
+
+//                Locations locations1 = new Locations(destinationLatitude,destinationLongitude,getAddress(location),date,locationVisited);
+
+                dataBaseHelper.updateLocation(Locations.savedLocations.get(position).getId(),destinationLatitude,destinationLongitude,(getAddress(location)),locationVisited);
+//                Locations locations = new Locations(1,destinationLatitude,destinationLongitude,getAddress(location),date,locationVisited);
+//                Locations.savedLocations.remove(position);
+//                Locations.savedLocations.add(position,locations);
+
+                locationVisited = 0;
+            }
+        });
     }
 
     @Override
@@ -104,6 +237,8 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         System.out.println("on map ready");
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        mMap.setOnMarkerDragListener(this);
+
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
@@ -115,115 +250,83 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                 destinationLatitude = latLng.latitude;
                 destinationLongitude = latLng.longitude;
 
-                Calendar calendar = Calendar.getInstance();
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
-                String savedDate = sdf.format(calendar.getTime());
+                MarkerOptions options = new MarkerOptions().position(latLng).title(getAddress(location));
+                mMap.addMarker(options);
 
-                System.out.println("---------------------------------------------------");
-                System.out.println("latitude " + destinationLatitude + "longitude " + destinationLongitude);
+//                Calendar calendar = Calendar.getInstance();
+//                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+//                String savedDate = sdf.format(calendar.getTime());
+//
+//                System.out.println("---------------------------------------------------");
+//                System.out.println("latitude " + destinationLatitude + "longitude " + destinationLongitude);
+//
+//                setMarker(location);
+//
+//                final Locations favLocation = new Locations(destinationLatitude,destinationLongitude,getAddress(location),savedDate,locationVisited);
+//
+//                AlertDialog.Builder builder = new AlertDialog.Builder(LocationActivity.this);
+//                builder.setTitle("Do you want to save location?");
+//                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//
+//
+//                        Locations.savedLocations.add(favLocation);
+//                    }
+//                });
+//
+//                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//
+//                    }
+//                });
+//                AlertDialog alertDialog = builder.create();
+//                alertDialog.show();
+//
+//                for (int i = 0 ; i < Locations.savedLocations.size(); i++){
+//                    System.out.println(Locations.savedLocations.get(i).getUserLat());
+//                    System.out.println(Locations.savedLocations.get(i).getAddress());
+//                }
 
-                setMarker(location);
-
-                final Locations favLocation = new Locations(destinationLatitude,destinationLongitude,getAddress(location),savedDate);
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(LocationActivity.this);
-                builder.setTitle("Do you want to save location?");
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-
-                        Locations.savedLocations.add(favLocation);
-                    }
-                });
-
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-                AlertDialog alertDialog = builder.create();
-                alertDialog.show();
-
-                for (int i = 0 ; i < Locations.savedLocations.size(); i++){
-                    System.out.println(Locations.savedLocations.get(i).getUserLat());
-                    System.out.println(Locations.savedLocations.get(i).getAddress());
-                }
 
 
             }
         });
+
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
-            public boolean onMarkerClick(Marker marker) {
+            public boolean onMarkerClick(final Marker marker) {
 
-                destinationLatitude = marker.getPosition().latitude;
-                destinationLongitude = marker.getPosition().longitude;
+                AlertDialog.Builder builder2 = new AlertDialog.Builder(LocationActivity.this);
+                builder2.setTitle("Select source or destination");
+                builder2.setPositiveButton("Source", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        latitude = marker.getPosition().latitude;
+                        longitude = marker.getPosition().longitude;
 
-                        Calendar calendar = Calendar.getInstance();
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
-                        String savedDate1 = sdf.format(calendar.getTime());
+                    }
+                });
 
-                        Location nearbyLocation = new Location("");
-                        nearbyLocation.setLatitude(marker.getPosition().latitude);
-                        nearbyLocation.setLongitude(marker.getPosition().longitude);
+                builder2.setNegativeButton("Destination", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        destinationLatitude = marker.getPosition().latitude;
+                        destinationLongitude = marker.getPosition().longitude;
 
-
-                        final Locations favLocation1 = new Locations(marker.getPosition().latitude,marker.getPosition().longitude,getAddress(nearbyLocation),savedDate1);
-
-                        System.out.println("---------------------------------------------------");
-                        System.out.println("before alert");
-
-                        AlertDialog.Builder builder1 = new AlertDialog.Builder(LocationActivity.this);
-                        builder1.setTitle("Do you want to save location?");
-                        builder1.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                                for (int i = 0 ; i < Locations.savedLocations.size(); i++){
-                                    double lat = Locations.savedLocations.get(i).getUserLat();
-                                    if(destinationLatitude == lat){
-                                        alreadyAdded = true;
-                                        break;
-                                    }
-                                }
-                                if(alreadyAdded){
-                                    AlertDialog.Builder builder2 = new AlertDialog.Builder(LocationActivity.this);
-                                    builder2.setTitle("Location already saved!!!");
-                                    builder2.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-
-                                        }
-                                    });
-                                    AlertDialog dialog2 = builder2.create();
-                                    dialog2.show();
-                                }else {
-                                    Locations.savedLocations.add(favLocation1);
-                                }
-
-                            }
-                        });
-
-                        builder1.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        });
-                        AlertDialog alertDialog1 = builder1.create();
-                        alertDialog1.show();
-
-                        System.out.println("---------------------------------------------------");
-                        System.out.println("after alert");
+                    }
+                });
+                AlertDialog alertDialog1 = builder2.create();
+                alertDialog1.show();
 
 
 
 
-                return true;
+                        return true;
             }
         });
+
     }
 
     @Override
@@ -279,6 +382,10 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                 mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
                 return true;
 
+            case R.id.action_satellite:
+                mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                return true;
+
             case R.id.action_distance:
             case R.id.action_direction:
                 dataTransfer = new Object[3];
@@ -295,8 +402,6 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                     requestedDirection = true;
 
                 return true;
-
-
                 default:
                     return super.onOptionsItemSelected(item);
 
@@ -348,7 +453,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                             .build();
                     mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                     mMap.addMarker(new MarkerOptions().position(userLocation).title("Your Location")
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)).draggable(false));
 
 
 
@@ -372,9 +477,18 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                     System.out.println("---------------------------------------------------");
                     System.out.println("latitude " + ulatLng.latitude + "longitude " + ulatLng.longitude);
 
-                    MarkerOptions options = new MarkerOptions().position(ulatLng).title(selectedadress)
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
-                    mMap.addMarker(options);
+                    if(locationSelected == true){
+                        MarkerOptions options = new MarkerOptions().position(ulatLng).title(selectedadress)
+                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)).draggable(true);
+                        mMap.addMarker(options);
+                    }else {
+                        MarkerOptions options = new MarkerOptions().position(ulatLng).title(selectedadress)
+                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)).draggable(false);
+                        mMap.addMarker(options);
+                    }
+
+
+
                 }
             }
         };
@@ -396,7 +510,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     private void setMarker(Location location){
 
             LatLng userlatLng = new LatLng(location.getLatitude(),location.getLongitude());
-            MarkerOptions options = new MarkerOptions().position(userlatLng).title("your location");
+            MarkerOptions options = new MarkerOptions().position(userlatLng).title("your location").draggable(false);
 
 //            markerLmMap.addMarker(options));
             mMap.addMarker(options);
@@ -448,5 +562,39 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         googleDirectionUrl.append("&key="+getString(R.string.api_key_places));
         Log.d("", "getDirectionUrl: "+googleDirectionUrl);
         return googleDirectionUrl.toString();
+    }
+
+    @Override
+    public void onMarkerDrag(Marker marker) {
+
+    }
+
+    @Override
+    public void onMarkerDragEnd(Marker marker) {
+
+        destinationLongitude = marker.getPosition().latitude;
+        destinationLongitude = marker.getPosition().longitude;
+
+        Location location = new Location("");
+        location.setLatitude(destinationLatitude);
+        location.setLongitude(destinationLongitude);
+
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+        String savedDate1 = sdf.format(calendar.getTime());
+
+//        Locations locations1 = new Locations(1,destinationLatitude,destinationLongitude,getAddress(location),savedDate1,locationVisited);
+//
+//        Locations.savedLocations.remove(position);
+//
+//        Locations.savedLocations.add(position,locations1);
+
+//        dataBaseHelper.updateLocation(Locations.savedLocations.get(position).getId(),destinationLatitude,destinationLongitude,(getAddress(location)),savedDate1,locationVisited);
+
+    }
+
+    @Override
+    public void onMarkerDragStart(Marker marker) {
+
     }
 }

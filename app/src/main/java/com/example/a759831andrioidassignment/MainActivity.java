@@ -3,6 +3,7 @@ package com.example.a759831andrioidassignment;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -26,8 +27,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     Button addPlace;
-//    ListView locationListView;
     SwipeMenuListView locationListView;
+    DataBaseHelper dataBaseHelper;
 
 
 
@@ -40,7 +41,10 @@ public class MainActivity extends AppCompatActivity {
         addPlace = findViewById(R.id.btn_add_place);
 
         locationListView =  findViewById(R.id.location_list_view);
-//        locationListView = findViewById(R.id.location_list_view);
+
+        dataBaseHelper = new DataBaseHelper(this);
+
+
 
         addPlace.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,12 +54,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final String[] days = {"monday", "tues", "wed", "thrusday"};
 
-//        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, days);
-//        locationListView.setAdapter(adapter);
-
-        final LocationAdaptor locationAdaptor = new LocationAdaptor(this,R.layout.list_layout,Locations.savedLocations);
+        final LocationAdaptor locationAdaptor = new LocationAdaptor(this,R.layout.list_layout,Locations.savedLocations,dataBaseHelper);
         locationListView.setAdapter(locationAdaptor);
 
         locationListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
                 SwipeMenuItem deleteitem = new SwipeMenuItem(getApplicationContext());
                 deleteitem.setBackground(new ColorDrawable(Color.RED));
                 deleteitem.setTitle("Delete");
+                deleteitem.setTitleSize(20);
                 deleteitem.setTitleColor(Color.WHITE);
                 deleteitem.setWidth(170);
 
@@ -82,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
                 updateitem.setBackground(new ColorDrawable(Color.GRAY));
                 updateitem.setWidth(170);
                 updateitem.setTitle("Update");
+                updateitem.setTitleSize(20);
                 updateitem.setTitleColor(Color.WHITE);
 
                 menu.addMenuItem(updateitem);
@@ -94,12 +96,23 @@ public class MainActivity extends AppCompatActivity {
             public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
                 switch (index){
                     case 0:
-                        Locations.savedLocations.remove(position);
-                        LocationAdaptor locationAdaptor = new LocationAdaptor(MainActivity.this,R.layout.list_layout,Locations.savedLocations);
-                        locationListView.setAdapter(locationAdaptor);
+
+                        if(dataBaseHelper.deleteLocation(Locations.savedLocations.get(position).getId())){
+                            loadLocations();
+                            LocationAdaptor locationAdaptor = new LocationAdaptor(MainActivity.this,R.layout.list_layout,Locations.savedLocations,dataBaseHelper);
+                            locationListView.setAdapter(locationAdaptor);
+                        }
+//                        Locations.savedLocations.remove(position);
+//                        LocationAdaptor locationAdaptor = new LocationAdaptor(MainActivity.this,R.layout.list_layout,Locations.savedLocations,dataBaseHelper);
+//                        locationListView.setAdapter(locationAdaptor);
+
 
                         break;
                     case 1:
+                        Intent intent = new Intent(MainActivity.this,LocationActivity.class);
+                        intent.putExtra("update",true);
+                        intent.putExtra("listPosition",position);
+                        startActivity(intent);
                         Toast.makeText(MainActivity.this, "updated", Toast.LENGTH_SHORT).show();
                         break;
                 }
@@ -118,7 +131,41 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        LocationAdaptor locationAdaptor = new LocationAdaptor(this,R.layout.list_layout,Locations.savedLocations);
+         loadLocations();
+
+        LocationAdaptor locationAdaptor = new LocationAdaptor(this,R.layout.list_layout,Locations.savedLocations,dataBaseHelper);
         locationListView.setAdapter(locationAdaptor);
+    }
+
+    private void loadLocations(){
+        /*
+        String sql = "select * from employees";
+        Cursor cursor = mDatabase.rawQuery(sql,null);
+
+         */
+
+        Cursor cursor  =  dataBaseHelper.getallLocations();
+        Locations.savedLocations.clear();
+
+        if(cursor.moveToFirst()){
+            do{
+//                employeeList.add(new Employee(cursor.getInt(0),cursor.getString(1),cursor.getString(2),cursor.getString(3),cursor.getDouble(4)));
+                Locations.savedLocations.add(new Locations(cursor.getInt(0),cursor.getDouble(1),cursor.getDouble(2),cursor.getString(3),cursor.getString(4),cursor.getInt(5)));
+
+            }while (cursor.moveToNext());
+            cursor.close();
+
+            //show items in list view
+            //we use a custom adaptor to show employee
+
+            LocationAdaptor locationAdaptor = new LocationAdaptor(this,R.layout.list_layout,Locations.savedLocations,dataBaseHelper);
+            locationListView.setAdapter(locationAdaptor);
+
+
+//            EmployeeAdaptor employeeAdaptor = new EmployeeAdaptor(this,R.layout.list_layout_employee,employeeList,databaseHelper);
+//            listView.setAdapter(employeeAdaptor);
+
+
+        }
     }
 }

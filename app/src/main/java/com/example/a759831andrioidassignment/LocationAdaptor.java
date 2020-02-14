@@ -1,6 +1,7 @@
 package com.example.a759831andrioidassignment;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,13 +19,16 @@ public class LocationAdaptor extends ArrayAdapter {
     private List<Locations> locations;
     private final int layoutresource;
 
+    DataBaseHelper dataBaseHelper;
 
 
-    public LocationAdaptor(@NonNull Context context, int resource, List<Locations> locations) {
+
+    public LocationAdaptor(@NonNull Context context, int resource, List<Locations> locations,DataBaseHelper dataBaseHelper) {
         super(context, resource, locations);
         this.mcontext = context;
         this.locations = locations;
         this.layoutresource = resource;
+        this.dataBaseHelper = dataBaseHelper;
     }
 
     @Override
@@ -46,13 +50,30 @@ public class LocationAdaptor extends ArrayAdapter {
 
         String savedAddress = locations1.getAddress();
 
-        if(savedAddress.isEmpty())
+        if(savedAddress.isEmpty()){
+
             adrss.setText(locations1.getDate());
-        else
+            if(locations1.isVisited() == 1){
+                System.out.println("-----------------------------------------------------");
+                System.out.println(locations1.isVisited());
+                adrss.setBackgroundColor(Color.CYAN);
+                v.setBackgroundColor(Color.CYAN);
+            }
+        }
+
+        else{
             adrss.setText(savedAddress);
+            if(locations1.isVisited() == 1){
+                System.out.println("-----------------------------------------------------");
+                System.out.println(locations1.isVisited());
+                adrss.setBackgroundColor(Color.CYAN);
+                v.setBackgroundColor(Color.CYAN);
+            }
+        }
+
 
         return v;
     }
 
-    
+
 }
