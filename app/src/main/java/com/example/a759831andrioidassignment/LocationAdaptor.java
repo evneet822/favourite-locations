@@ -50,7 +50,11 @@ public class LocationAdaptor extends ArrayAdapter {
 
         String savedAddress = locations1.getAddress();
 
+        System.out.println("-------------" + savedAddress + "-----------");
+
         if(savedAddress.isEmpty()){
+
+
 
             adrss.setText(locations1.getDate());
             if(locations1.isVisited() == 1){

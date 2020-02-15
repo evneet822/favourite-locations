@@ -33,8 +33,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 COLUMN_ID + " integer not null constraint favlocation_pk primary key autoincrement," +
                 COLUMN_LAT + " double not null, " +
                 COLUMN_LONG + " double not null, " +
-                COLUMN_DATE + " varchar(200) not null, " +
                 COLUMN_ADRRESS + " varchar(200) not null, " +
+                COLUMN_DATE + " varchar(200) not null, " +
                 COLUMN_VISITED + " integer not null);" ;
         db.execSQL(sql);
 
@@ -62,11 +62,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         //first argument is column name and the second is value
 
-        cv.put(COLUMN_LAT,String.valueOf(latitute));
-        cv.put(COLUMN_LONG,String.valueOf(longitude));
-        cv.put(COLUMN_ADRRESS,date);
-        cv.put(COLUMN_DATE,address);
-        cv.put(COLUMN_VISITED,String.valueOf(isVisited));
+        cv.put(COLUMN_LAT,latitute);
+        cv.put(COLUMN_LONG,longitude);
+        cv.put(COLUMN_ADRRESS,address);
+        cv.put(COLUMN_DATE,date);
+        cv.put(COLUMN_VISITED,isVisited);
 
         // insert method return row number if insertion is successful and -1 if un successful
 
@@ -96,8 +96,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 //        cv.put(COLUMN_DEPT,dept);
 //        cv.put(COLUMN_SALARY,String.valueOf(salary));
 
-        cv.put(COLUMN_LAT,String.valueOf(latitute));
-        cv.put(COLUMN_LONG,String.valueOf(longitude));
+        cv.put(COLUMN_LAT,latitute);
+        cv.put(COLUMN_LONG,longitude);
         cv.put(COLUMN_ADRRESS,address);
         cv.put(COLUMN_DATE,date);
         cv.put(COLUMN_VISITED,isVisited);

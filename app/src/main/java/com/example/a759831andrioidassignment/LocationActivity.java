@@ -115,6 +115,8 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                 nearbyLocation.setLatitude(destinationLatitude);
                 nearbyLocation.setLongitude(destinationLongitude);
 
+                final String addd = getAddress(nearbyLocation);
+
 
 //                final Locations favLocation1 = new Locations(destinationLatitude,destinationLongitude,getAddress(nearbyLocation),savedDate1,locationVisited);
 //                final Locations favlocation = new Locations(1,destinationLatitude,destinationLongitude,getAddress(nearbyLocation),savedDate1,locationVisited);
@@ -148,8 +150,11 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                             dialog2.show();
                         }else {
 //                            Locations.savedLocations.add(favlocation);
+                            System.out.println("----crosscheck------");
 
-                            if(dataBaseHelper.addLocation(destinationLatitude,destinationLongitude,(getAddress(nearbyLocation)),savedDate1,locationVisited)){
+                            System.out.println(destinationLatitude+destinationLongitude+addd+savedDate1+locationVisited);
+
+                            if(dataBaseHelper.addLocation(destinationLatitude,destinationLongitude,addd,savedDate1,locationVisited)){
                                 System.out.println("added");
                             }else {
                                 System.out.println("not added");
@@ -199,15 +204,21 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                 destinationLatitude = Locations.savedLocations.get(position).getUserLat();
                 destinationLongitude = Locations.savedLocations.get(position).getUserLong();
 
-                Location location = new Location("");
-                location.setLatitude(destinationLatitude);
-                location.setLongitude(destinationLongitude);
+//                Location location = new Location("");
+//                location.setLatitude(destinationLatitude);
+//                location.setLongitude(destinationLongitude);
+
+                String location = Locations.savedLocations.get(position).getAddress();
+                System.out.println("--------------------");
+                System.out.println(location);
+
 
                 String date = Locations.savedLocations.get(position).getDate();
 
+
 //                Locations locations1 = new Locations(destinationLatitude,destinationLongitude,getAddress(location),date,locationVisited);
 
-                if(dataBaseHelper.updateLocation(Locations.savedLocations.get(position).getId(),destinationLatitude,destinationLongitude,(getAddress(location)),date,locationVisited)){
+                if(dataBaseHelper.updateLocation(Locations.savedLocations.get(position).getId(),destinationLatitude,destinationLongitude,location,date,locationVisited)){
                     Toast.makeText(LocationActivity.this, "updated", Toast.LENGTH_SHORT).show();
                 }else{
                     Toast.makeText(LocationActivity.this, "not updated", Toast.LENGTH_SHORT).show();

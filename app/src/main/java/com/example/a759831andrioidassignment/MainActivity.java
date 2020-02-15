@@ -151,6 +151,12 @@ public class MainActivity extends AppCompatActivity {
             do{
 //                employeeList.add(new Employee(cursor.getInt(0),cursor.getString(1),cursor.getString(2),cursor.getString(3),cursor.getDouble(4)));
                 Locations.savedLocations.add(new Locations(cursor.getInt(0),cursor.getDouble(1),cursor.getDouble(2),cursor.getString(3),cursor.getString(4),cursor.getInt(5)));
+                System.out.println(cursor.getInt(0));
+                System.out.println(cursor.getDouble(1));
+                System.out.println(cursor.getDouble(2));
+                System.out.println(cursor.getString(3));
+                System.out.println(cursor.getString(4));
+                System.out.println(cursor.getString(5));
 
             }while (cursor.moveToNext());
             cursor.close();
